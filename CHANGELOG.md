@@ -1,5 +1,12 @@
 # Code Editor Package for Antigravity
 
+## [1.0.1] - 2026-04-25
+
+Integration:
+
+- Reuse the existing Antigravity window when opening scripts from Unity to preserve fullscreen/window state.
+- Update documentation to use Antigravity naming.
+
 ## [1.0.0] - 2025-11-22
 
 Integration:

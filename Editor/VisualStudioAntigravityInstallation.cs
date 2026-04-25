@@ -470,18 +470,28 @@ namespace Microsoft.Unity.VisualStudio.Editor {
 
 			var directory = IOPath.GetDirectoryName(solution);
 			var application = Path;
+			var arguments = GetOpenArguments(directory, path, line, column);
 
-			ProcessRunner.Start(string.IsNullOrEmpty(path) ?
-				ProcessStartInfoFor(application, $"\"{directory}\"") :
-				ProcessStartInfoFor(application, $"\"{directory}\" -g \"{path}\":{line}:{column}"));
+			ProcessRunner.Start(ProcessStartInfoFor(application, arguments));
 
 			return true;
+		}
+
+		private static string GetOpenArguments(string directory, string path, int line, int column) {
+			if (string.IsNullOrEmpty(path))
+				return QuoteArgument(directory);
+
+			return $"{QuoteArgument(directory)} --reuse-window -g {QuoteArgument($"{path}:{line}:{column}")}";
+		}
+
+		private static string QuoteArgument(string argument) {
+			return $"\"{argument}\"";
 		}
 
 		private static ProcessStartInfo ProcessStartInfoFor(string application, string arguments) {
 #if UNITY_EDITOR_OSX
 			// wrap with built-in OSX open feature
-			arguments = $"-n \"{application}\" --args {arguments}";
+			arguments = $"\"{application}\" --args {arguments}";
 			application = "open";
 			return ProcessRunner.ProcessStartInfoFor(application, arguments, redirect:false, shell: true);
 #else
